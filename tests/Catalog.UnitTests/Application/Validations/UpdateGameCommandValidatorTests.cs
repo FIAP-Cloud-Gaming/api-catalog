@@ -27,7 +27,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -50,7 +50,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -73,7 +73,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -97,7 +97,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -121,7 +121,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -144,7 +144,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -167,7 +167,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -190,7 +190,7 @@ public sealed class UpdateGameCommandValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();

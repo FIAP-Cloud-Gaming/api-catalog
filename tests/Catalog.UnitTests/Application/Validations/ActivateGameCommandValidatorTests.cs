@@ -18,7 +18,7 @@ public sealed class ActivateGameCommandValidatorTests
         var command = new ActivateGameCommand(GameId: 1);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -32,7 +32,7 @@ public sealed class ActivateGameCommandValidatorTests
         var command = new ActivateGameCommand(GameId: 0);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -46,7 +46,7 @@ public sealed class ActivateGameCommandValidatorTests
         var command = new ActivateGameCommand(GameId: -1);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();

@@ -74,7 +74,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().NotBeNullOrEmpty();
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.Should().Contain("Domain Error");
         responseBody.Should().Contain("Cannot publish game in current state");
     }
@@ -101,7 +101,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().NotBeNullOrEmpty();
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.Should().Contain("Not Found");
     }
 
@@ -127,7 +127,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().NotBeNullOrEmpty();
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.Should().Contain("Unauthorized");
     }
 
@@ -153,7 +153,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().NotBeNullOrEmpty();
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.Should().Contain("Server Error");
         responseBody.Should().Contain("An unexpected error occurred");
     }

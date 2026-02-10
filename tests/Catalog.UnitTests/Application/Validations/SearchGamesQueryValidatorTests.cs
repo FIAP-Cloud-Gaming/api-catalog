@@ -27,7 +27,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -50,7 +50,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -73,7 +73,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -96,7 +96,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -119,7 +119,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -142,7 +142,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -165,7 +165,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -188,7 +188,7 @@ public sealed class SearchGamesQueryValidatorTests
         );
 
         // Act
-        var result = await _validator.ValidateAsync(query);
+        var result = await _validator.ValidateAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();

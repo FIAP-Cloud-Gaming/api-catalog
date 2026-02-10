@@ -21,10 +21,10 @@ public sealed class GameRepositoryTests : IDisposable
 
         // Act
         _repository.Add(game);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        var addedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id);
+        var addedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id, TestContext.Current.CancellationToken);
         addedGame.Should().NotBeNull();
         addedGame.Should().Be(game);
     }
@@ -35,10 +35,10 @@ public sealed class GameRepositoryTests : IDisposable
         // Arrange
         var game = GameTestFactory.CreateValidGameWithId(1, "Test Game");
         _context.Games.Add(game);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _repository.GetByIdAsync(1);
+        var result = await _repository.GetByIdAsync(1, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();
@@ -50,7 +50,7 @@ public sealed class GameRepositoryTests : IDisposable
     public async Task GetByIdAsync_GameNotExists_ShouldReturnNull()
     {
         // Act
-        var result = await _repository.GetByIdAsync(999);
+        var result = await _repository.GetByIdAsync(999, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeNull();
@@ -65,10 +65,10 @@ public sealed class GameRepositoryTests : IDisposable
         var game3 = GameTestFactory.CreateValidGameWithId(3, "Game 3");
 
         _context.Games.AddRange(game1, game2, game3);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _repository.GetAllAsync();
+        var result = await _repository.GetAllAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().HaveCount(3);
@@ -79,16 +79,16 @@ public sealed class GameRepositoryTests : IDisposable
     {
         // Arrange
         var game1 = GameTestFactory.CreateValidGameWithId(1, "Game 1");
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         var game2 = GameTestFactory.CreateValidGameWithId(2, "Game 2");
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         var game3 = GameTestFactory.CreateValidGameWithId(3, "Game 3");
 
         _context.Games.AddRange(game1, game2, game3);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = (await _repository.GetAllAsync()).ToList();
+        var result = (await _repository.GetAllAsync(TestContext.Current.CancellationToken)).ToList();
 
         // Assert
         result.Should().HaveCount(3);
@@ -106,11 +106,11 @@ public sealed class GameRepositoryTests : IDisposable
         publishedGame.Publish();
 
         _context.Games.AddRange(draftGame, publishedGame);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var draftGames = await _repository.GetByStatusAsync(GameStatus.Draft);
-        var publishedGames = await _repository.GetByStatusAsync(GameStatus.Published);
+        var draftGames = await _repository.GetByStatusAsync(GameStatus.Draft, TestContext.Current.CancellationToken);
+        var publishedGames = await _repository.GetByStatusAsync(GameStatus.Published, TestContext.Current.CancellationToken);
 
         // Assert
         draftGames.Should().ContainSingle();
@@ -142,14 +142,14 @@ public sealed class GameRepositoryTests : IDisposable
         // Arrange
         var game = GameTestFactory.CreateValidGameWithId(1, "Test Game");
         _context.Games.Add(game);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         _repository.Remove(game);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        var removedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == 1);
+        var removedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == 1, TestContext.Current.CancellationToken);
         removedGame.Should().BeNull();
     }
 
@@ -168,7 +168,7 @@ public sealed class GameRepositoryTests : IDisposable
     public async Task GetAllAsync_EmptyDatabase_ShouldReturnEmptyList()
     {
         // Act
-        var result = await _repository.GetAllAsync();
+        var result = await _repository.GetAllAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeEmpty();

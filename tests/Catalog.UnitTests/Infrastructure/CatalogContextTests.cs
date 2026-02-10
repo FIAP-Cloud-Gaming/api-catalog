@@ -19,11 +19,11 @@ public sealed class CatalogContextTests : IDisposable
         _context.Games.Add(game);
 
         // Act
-        var result = await _context.SaveEntitiesAsync();
+        var result = await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeTrue();
-        var savedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id);
+        var savedGame = await _context.Games.FirstOrDefaultAsync(g => g.Id == game.Id, TestContext.Current.CancellationToken);
         savedGame.Should().NotBeNull();
     }
 
@@ -40,10 +40,10 @@ public sealed class CatalogContextTests : IDisposable
             platforms: [Platform.PC, Platform.PlayStation5]);
 
         _context.Games.Add(game);
-        await _context.SaveEntitiesAsync();
+        await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var retrievedGame = await _context.Games.FirstOrDefaultAsync(g => g.Title.Value == "The Witcher 3");
+        var retrievedGame = await _context.Games.FirstOrDefaultAsync(g => g.Title.Value == "The Witcher 3", TestContext.Current.CancellationToken);
 
         // Assert
         retrievedGame.Should().NotBeNull();
