@@ -1,0 +1,55 @@
+using Catalog.UnitTests.Helpers;
+
+namespace Catalog.UnitTests.Application.Validations;
+
+public sealed class ActivateGameCommandValidatorTests
+{
+    private readonly ActivateGameCommandValidator _validator;
+
+    public ActivateGameCommandValidatorTests()
+    {
+        _validator = new ActivateGameCommandValidator();
+    }
+
+    [Fact]
+    public async Task Validate_ValidCommand_ShouldPass()
+    {
+        // Arrange
+        var command = new ActivateGameCommand(GameId: 1);
+
+        // Act
+        var result = await _validator.ValidateAsync(command);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
+        result.Errors.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Validate_GameIdZero_ShouldFail()
+    {
+        // Arrange
+        var command = new ActivateGameCommand(GameId: 0);
+
+        // Act
+        var result = await _validator.ValidateAsync(command);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == nameof(ActivateGameCommand.GameId));
+    }
+
+    [Fact]
+    public async Task Validate_GameIdNegative_ShouldFail()
+    {
+        // Arrange
+        var command = new ActivateGameCommand(GameId: -1);
+
+        // Act
+        var result = await _validator.ValidateAsync(command);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == nameof(ActivateGameCommand.GameId));
+    }
+}
