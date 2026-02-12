@@ -126,6 +126,22 @@ services:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
 
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    container_name: fcg-catalog-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - fcg-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   catalog.api:
     image: ${DOCKER_REGISTRY:-fcg}/catalog.api:${TAG:-latest}
     build:
@@ -140,6 +156,8 @@ services:
       redis:
         condition: service_healthy
       elasticsearch:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       jaeger:
         condition: service_started
@@ -160,4 +178,5 @@ volumes:
   postgres-data:
   mongo-data:
   elasticsearch-data:
+  rabbitmq-data:
   grafana-data:

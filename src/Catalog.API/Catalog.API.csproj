@@ -13,6 +13,8 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
     <PackageReference Include="Elastic.Serilog.Sinks" />
+    <PackageReference Include="FiapCloudGaming.EventBus" />
+    <PackageReference Include="FiapCloudGaming.EventBusRabbitMQ" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
@@ -25,10 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Catalog.Domain\Catalog.Domain.csproj" />
     <ProjectReference Include="..\Catalog.Infrastructure\Catalog.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\IntegrationEvents\" />
   </ItemGroup>
 
 </Project>

@@ -40,3 +40,9 @@ global using Serilog;
 global using Scalar.AspNetCore;
 
 global using Core.SeedWork;
+
+global using Catalog.API.Application.IntegrationEvents.Events;
+
+global using EventBus.Abstractions;
+global using EventBus.Events;
+global using EventBus.Extensions;

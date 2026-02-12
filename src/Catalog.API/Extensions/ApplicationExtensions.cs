@@ -1,3 +1,5 @@
+using EventBusRabbitMQ;
+
 namespace Catalog.API.Extensions;
 
 internal static class ApplicationExtensions
@@ -30,6 +32,13 @@ internal static class ApplicationExtensions
                 tags: ["db", "postgres", "ready"]);
 
         return services;
+    }
+
+    public static IHostApplicationBuilder ConfigureEventBus(this IHostApplicationBuilder builder)
+    {
+        builder.AddRabbitMqEventBus(builder.Configuration.GetConnectionString("RabbitMQ")!, "catalog-service");
+
+        return builder;
     }
 
     public static IHostApplicationBuilder ConfigureCatalogSerilog(this IHostApplicationBuilder builder)

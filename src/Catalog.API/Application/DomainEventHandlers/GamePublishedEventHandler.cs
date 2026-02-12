@@ -3,6 +3,7 @@ namespace Catalog.API.Application.DomainEventHandlers;
 public class GamePublishedEventHandler(
     IGameRepository gameRepository,
     IGameSearchRepository searchRepository,
+    IEventBus eventBus,
     ILogger<GamePublishedEventHandler> logger)
     : INotificationHandler<GamePublishedDomainEvent>
 {
@@ -22,7 +23,8 @@ public class GamePublishedEventHandler(
             var searchDoc = GameSearchDocument.FromGame(game);
             await searchRepository.UpdateGameAsync(searchDoc, cancellationToken);
 
-            logger.LogInformation("Game {GameId} published status updated in Elasticsearch successfully", notification.GameId);
+            await eventBus.PublishAsync(new GamePublishedIntegrationEvent(game.Id, game.Title.Value));
+            logger.LogInformation("Game {GameId} published and integration event published", notification.GameId);
         }
         catch (Exception ex)
         {

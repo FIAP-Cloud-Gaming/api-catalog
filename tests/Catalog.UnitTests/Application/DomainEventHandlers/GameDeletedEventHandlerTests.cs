@@ -5,15 +5,18 @@ namespace Catalog.UnitTests.Application.DomainEventHandlers;
 public sealed class GameDeletedEventHandlerTests
 {
     private readonly IGameSearchRepository _gameSearchRepository;
+    private readonly IEventBus _eventBus;
     private readonly ILogger<GameDeletedEventHandler> _logger;
     private readonly GameDeletedEventHandler _handler;
 
     public GameDeletedEventHandlerTests()
     {
         _gameSearchRepository = Substitute.For<IGameSearchRepository>();
+        _eventBus = Substitute.For<IEventBus>();
         _logger = Substitute.For<ILogger<GameDeletedEventHandler>>();
         _handler = new GameDeletedEventHandler(
             _gameSearchRepository,
+            _eventBus,
             _logger
         );
     }

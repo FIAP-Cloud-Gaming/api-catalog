@@ -2,6 +2,7 @@ namespace Catalog.API.Application.DomainEventHandlers;
 
 public class GameDeletedEventHandler(
     IGameSearchRepository searchRepository,
+    IEventBus eventBus,
     ILogger<GameDeletedEventHandler> logger)
     : INotificationHandler<GameDeletedDomainEvent>
 {
@@ -13,7 +14,8 @@ public class GameDeletedEventHandler(
 
             await searchRepository.DeleteGameAsync(notification.GameId, cancellationToken);
 
-            logger.LogInformation("Game {GameId} deleted from Elasticsearch successfully", notification.GameId);
+            await eventBus.PublishAsync(new GameDeletedIntegrationEvent(notification.GameId, notification.Title));
+            logger.LogInformation("Game {GameId} deleted from Elasticsearch and integration event published", notification.GameId);
         }
         catch (Exception ex)
         {
