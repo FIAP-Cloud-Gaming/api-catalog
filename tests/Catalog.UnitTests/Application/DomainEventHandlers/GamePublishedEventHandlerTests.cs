@@ -6,7 +6,7 @@ public sealed class GamePublishedEventHandlerTests
 {
     private readonly IGameRepository _gameRepository;
     private readonly IGameSearchRepository _gameSearchRepository;
-    private readonly IEventBus _eventBus;
+    private readonly ICatalogIntegrationEventService _integrationEventService;
     private readonly ILogger<GamePublishedEventHandler> _logger;
     private readonly GamePublishedEventHandler _handler;
 
@@ -14,12 +14,12 @@ public sealed class GamePublishedEventHandlerTests
     {
         _gameRepository = Substitute.For<IGameRepository>();
         _gameSearchRepository = Substitute.For<IGameSearchRepository>();
-        _eventBus = Substitute.For<IEventBus>();
+        _integrationEventService = Substitute.For<ICatalogIntegrationEventService>();
         _logger = Substitute.For<ILogger<GamePublishedEventHandler>>();
         _handler = new GamePublishedEventHandler(
             _gameRepository,
             _gameSearchRepository,
-            _eventBus,
+            _integrationEventService,
             _logger
         );
     }

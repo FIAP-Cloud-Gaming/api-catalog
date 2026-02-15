@@ -1,9 +1,11 @@
+using Elastic.Clients.Elasticsearch.Aggregations;
+
 namespace Catalog.Infrastructure.Repositories;
 
-public class GameSearchRepository(ElasticsearchClient client) 
+public class GameSearchRepository(ElasticsearchClient client)
     : IGameSearchRepository
 {
-    private readonly ElasticsearchClient _client = client 
+    private readonly ElasticsearchClient _client = client
         ?? throw new ArgumentNullException(nameof(client));
 
     private const string IndexName = "games";
@@ -134,5 +136,105 @@ public class GameSearchRepository(ElasticsearchClient client)
             throw new InvalidOperationException($"Search failed: {response.ElasticsearchServerError?.Error.Reason}");
 
         return (response.Documents, response.Total);
+    }
+
+    public async Task<GameMetrics> GetGameMetricsAsync(CancellationToken ct)
+    {
+        var response = await _client.SearchAsync<GameSearchDocument>(s => s
+            .Indices(IndexName)
+            .Size(0) // Nao retorna documentos, apenas agregacoes
+            .Aggregations(a => a
+                .Add("top_genres", agg => agg.Terms(t => t.Field(f => f.Genres).Size(10)))
+                .Add("top_platforms", agg => agg.Terms(t => t.Field(f => f.Platforms).Size(10)))
+                .Add("avg_price", agg => agg.Avg(avg => avg.Field(f => f.Price)))
+                .Add("price_ranges", agg => agg.Range(r => r
+                    .Field(f => f.Price)
+                    .Ranges(
+                        new AggregationRange() { To = 20.0 },
+                        new AggregationRange() { From = 20.0, To = 50.0 },
+                        new AggregationRange() { From = 50.0, To = 100.0 },
+                        new AggregationRange() { From = 100.0 }
+                    )))
+                .Add("most_reviewed", agg => agg.Terms(t => t
+                    .Field(f => f.Title.Suffix("keyword"))
+                    .Size(10)
+                    .Order([new KeyValuePair<Field, SortOrder>("total_reviews", SortOrder.Desc)])
+                ))
+            ), ct);
+
+        return MapToGameMetrics(response.Aggregations);
+    }
+
+    private static GameMetrics MapToGameMetrics(AggregateDictionary? aggregations)
+    {
+        if (aggregations is null)
+            return new GameMetrics();
+
+        var topGenres = new List<MetricBucket>();
+        var genreAgg = aggregations.GetStringTerms("top_genres");
+        if (genreAgg is not null)
+        {
+            topGenres.AddRange(genreAgg.Buckets.Select(b => new MetricBucket(b.Key.ToString(), b.DocCount)));
+        }
+
+        var topPlatforms = new List<MetricBucket>();
+        var platformAgg = aggregations.GetStringTerms("top_platforms");
+        if (platformAgg is not null)
+        {
+            topPlatforms.AddRange(platformAgg.Buckets.Select(b => new MetricBucket(b.Key.ToString(), b.DocCount)));
+        }
+
+        decimal avgPrice = 0;
+        var avgAgg = aggregations.GetAverage("avg_price");
+        if (avgAgg?.Value is not null)
+        {
+            avgPrice = (decimal)avgAgg.Value.Value;
+        }
+
+        var priceRanges = new List<PriceRangeBucket>();
+        var rangeAgg = aggregations.GetRange("price_ranges");
+        if (rangeAgg is not null)
+        {
+            priceRanges.AddRange(rangeAgg.Buckets.Select(b => new PriceRangeBucket(b.Key ?? string.Empty, b.From, b.To, b.DocCount)));
+        }
+
+        var mostReviewed = new List<MetricBucket>();
+        var reviewedAgg = aggregations.GetStringTerms("most_reviewed");
+        if (reviewedAgg is not null)
+        {
+            mostReviewed.AddRange(reviewedAgg.Buckets.Select(b => new MetricBucket(b.Key.ToString(), b.DocCount)));
+        }
+
+        return new GameMetrics
+        {
+            TopGenres = topGenres,
+            TopPlatforms = topPlatforms,
+            AveragePrice = avgPrice,
+            PriceRanges = priceRanges,
+            MostReviewed = mostReviewed
+        };
+    }
+
+    public async Task<IReadOnlyList<GameSearchDocument>> GetRecommendationsAsync(
+        IEnumerable<int> likedGameIds,
+        int size = 10,
+        CancellationToken ct = default)
+    {
+        var response = await _client.SearchAsync<GameSearchDocument>(s => s
+            .Indices(IndexName)
+            .Query(q => q
+                .MoreLikeThis(mlt => mlt
+                    .Fields(sourceArray)
+                    .Like(likedGameIds.Select(id =>
+                        new Like(new LikeDocument { Index = IndexName, Id = id.ToString() })).
+                        ToList())
+                    .MinTermFreq(1)
+                    .MinDocFreq(1)
+                    .MaxQueryTerms(12)
+                )
+            )
+            .Size(size), ct);
+
+        return [.. response.Documents];
     }
 }

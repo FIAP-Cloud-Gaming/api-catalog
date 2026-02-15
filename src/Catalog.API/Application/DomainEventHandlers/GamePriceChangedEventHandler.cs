@@ -4,7 +4,7 @@ public class GamePriceChangedEventHandler(
     IGameRepository gameRepository,
     IGameSearchRepository searchRepository,
     IPriceHistoryRepository priceHistoryRepository,
-    IEventBus eventBus,
+    ICatalogIntegrationEventService integrationEventService,
     ILogger<GamePriceChangedEventHandler> logger)
     : INotificationHandler<GamePriceChangedDomainEvent>
 {
@@ -57,7 +57,7 @@ public class GamePriceChangedEventHandler(
 
             logger.LogInformation("Price history updated for game {GameId}", notification.GameId);
 
-            await eventBus.PublishAsync(new GamePriceChangedIntegrationEvent(
+            await integrationEventService.AddAndSaveEventAsync(new GamePriceChangedIntegrationEvent(
                 notification.GameId, notification.OldPrice.Amount, notification.NewPrice.Amount, notification.NewPrice.Currency));
             logger.LogInformation("Game {GameId} price change synchronized and integration event published", notification.GameId);
         }

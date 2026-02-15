@@ -4,7 +4,7 @@ public class GameCreatedEventHandler(
     IGameRepository gameRepository,
     IGameSearchRepository searchRepository,
     IPriceHistoryRepository priceHistoryRepository,
-    IEventBus eventBus,
+    ICatalogIntegrationEventService integrationEventService,
     ILogger<GameCreatedEventHandler> logger)
     : INotificationHandler<GameCreatedDomainEvent>
 {
@@ -36,7 +36,7 @@ public class GameCreatedEventHandler(
             await priceHistoryRepository.AddAsync(history, cancellationToken);
             logger.LogInformation("Price history created for game {GameId}", notification.GameId);
 
-            await eventBus.PublishAsync(new GameCreatedIntegrationEvent(
+            await integrationEventService.AddAndSaveEventAsync(new GameCreatedIntegrationEvent(
                 game.Id, game.Title.Value, game.Price.Amount, game.Price.Currency));
             logger.LogInformation("GameCreatedIntegrationEvent published for game {GameId}", notification.GameId);
         }

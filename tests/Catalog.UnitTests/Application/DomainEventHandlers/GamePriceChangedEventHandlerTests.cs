@@ -7,7 +7,7 @@ public sealed class GamePriceChangedEventHandlerTests
     private readonly IGameRepository _gameRepository;
     private readonly IGameSearchRepository _gameSearchRepository;
     private readonly IPriceHistoryRepository _priceHistoryRepository;
-    private readonly IEventBus _eventBus;
+    private readonly ICatalogIntegrationEventService _integrationEventService;
     private readonly ILogger<GamePriceChangedEventHandler> _logger;
     private readonly GamePriceChangedEventHandler _handler;
 
@@ -16,13 +16,13 @@ public sealed class GamePriceChangedEventHandlerTests
         _gameRepository = Substitute.For<IGameRepository>();
         _gameSearchRepository = Substitute.For<IGameSearchRepository>();
         _priceHistoryRepository = Substitute.For<IPriceHistoryRepository>();
-        _eventBus = Substitute.For<IEventBus>();
+        _integrationEventService = Substitute.For<ICatalogIntegrationEventService>();
         _logger = Substitute.For<ILogger<GamePriceChangedEventHandler>>();
         _handler = new GamePriceChangedEventHandler(
             _gameRepository,
             _gameSearchRepository,
             _priceHistoryRepository,
-            _eventBus,
+            _integrationEventService,
             _logger
         );
     }

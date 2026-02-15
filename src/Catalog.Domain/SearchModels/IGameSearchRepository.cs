@@ -16,4 +16,11 @@ public interface IGameSearchRepository
         int pageIndex = 0,
         int pageSize = 20,
         CancellationToken cancellationToken = default);
+
+    Task<GameMetrics> GetGameMetricsAsync(CancellationToken ct = default);
+
+    Task<IReadOnlyList<GameSearchDocument>> GetRecommendationsAsync(
+        IEnumerable<int> likedGameIds,
+        int size = 10,
+        CancellationToken ct = default);
 }

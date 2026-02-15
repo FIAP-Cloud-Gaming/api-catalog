@@ -174,6 +174,11 @@ public class Game : EntityWithNotification, IAggregateRoot
         AddNotification(new GameUnpublishedDomainEvent(Id, Title.Value));
     }
 
+    public void Delete()
+    {
+        AddNotification(new GameDeletedDomainEvent(Id, Title.Value));
+    }
+
     public void Archive()
     {
         Status = GameStatus.Archived;

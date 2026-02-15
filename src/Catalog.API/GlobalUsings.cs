@@ -41,6 +41,7 @@ global using Scalar.AspNetCore;
 
 global using Core.SeedWork;
 
+global using Catalog.API.Application.IntegrationEvents;
 global using Catalog.API.Application.IntegrationEvents.Events;
 
 global using EventBus.Abstractions;

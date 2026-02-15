@@ -14,24 +14,20 @@ public record SearchGamesQuery(
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // Parse comma-separated genres
         IReadOnlyCollection<Genre>? genres = null;
         if (!string.IsNullOrWhiteSpace(request.Genres))
         {
-            genres = request.Genres
+            genres = [.. request.Genres
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(g => Enum.Parse<Genre>(g, ignoreCase: true))
-                .ToList();
+                .Select(g => Enum.Parse<Genre>(g, ignoreCase: true))];
         }
 
-        // Parse comma-separated platforms
         IReadOnlyCollection<Platform>? platforms = null;
         if (!string.IsNullOrWhiteSpace(request.Platforms))
         {
-            platforms = request.Platforms
+            platforms = [.. request.Platforms
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(p => Enum.Parse<Platform>(p, ignoreCase: true))
-                .ToList();
+                .Select(p => Enum.Parse<Platform>(p, ignoreCase: true))];
         }
 
         return new SearchGamesQuery(

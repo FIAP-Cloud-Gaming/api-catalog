@@ -13,6 +13,7 @@ public class DeleteGameCommandHandler(IGameRepository gameRepository)
 
         if (game is null) return false;
 
+        game.Delete();
         gameRepository.Remove(game);
         await gameRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 

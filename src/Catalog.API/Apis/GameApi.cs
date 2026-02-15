@@ -10,6 +10,8 @@ using Catalog.API.Application.Queries.GetGamesByGenre;
 using Catalog.API.Application.Queries.GetGamesByPlatform;
 using Catalog.API.Application.Queries.GetGamesByStatus;
 using Catalog.API.Application.Queries.SearchGames;
+using Catalog.API.Application.Queries.GetGameMetrics;
+using Catalog.API.Application.Queries.GetRecommendations;
 
 namespace Catalog.API.Apis;
 
@@ -93,6 +95,17 @@ public static class GameApi
             .WithName("ReindexGames")
             .WithDescription("Re-index all games from PostgreSQL to Elasticsearch")
             .Produces<ReindexGamesResult>(StatusCodes.Status200OK);
+
+        api.MapGet("/metrics", GetGameMetrics)
+            .WithName("GetGameMetrics")
+            .WithDescription("Get aggregated game metrics (genres, platforms, prices, reviews)")
+            .Produces<GameMetrics>(StatusCodes.Status200OK);
+
+        api.MapGet("/recommendations", GetRecommendations)
+            .WithName("GetRecommendations")
+            .WithDescription("Get game recommendations based on similar games (More Like This)")
+            .Produces<IReadOnlyList<GameViewModel>>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
 
         return api;
     }
@@ -231,6 +244,31 @@ public static class GameApi
     {
         var command = new ReindexGamesCommand();
         var result = await mediator.Send(command, cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetGameMetrics(
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetGameMetricsQuery();
+        var result = await mediator.Receive(query, cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetRecommendations(
+        [FromQuery] string gameIds,
+        [FromQuery] int size,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var ids = gameIds
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(int.Parse)
+            .ToList();
+
+        var query = new GetRecommendationsQuery(ids, size > 0 ? size : 10);
+        var result = await mediator.Receive(query, cancellationToken);
         return TypedResults.Ok(result);
     }
 }

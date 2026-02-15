@@ -1,4 +1,5 @@
-﻿using Catalog.Infrastructure.Repositories;
+﻿using Catalog.Infrastructure.IntegrationEvents;
+using Catalog.Infrastructure.Repositories;
 using Catalog.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,7 @@ public static class DependencyInjection
                 warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
         services.AddScoped<IGameRepository, GameRepository>();
+        services.AddScoped<IIntegrationEventLogService, IntegrationEventLogService>();
 
         // MongoDB
         services.AddSingleton<IMongoClient>(sp =>

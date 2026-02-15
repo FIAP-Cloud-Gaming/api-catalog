@@ -46,6 +46,7 @@ global using Core.SeedWork;
 global using EventBus.Abstractions;
 global using EventBus.Events;
 
+global using Catalog.API.Application.IntegrationEvents;
 global using Catalog.API.Application.IntegrationEvents.Events;
 
 global using FluentValidation;

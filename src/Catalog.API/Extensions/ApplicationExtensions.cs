@@ -10,11 +10,15 @@ internal static class ApplicationExtensions
 
         services.AddMediator(assembly);
 
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+        services.AddScoped(typeof(IPipelineBehavior<>), typeof(TransactionBehavior<>));
         services.AddScoped(typeof(IPipelineBehavior<>), typeof(LoggingBehavior<>));
         services.AddScoped(typeof(IPipelineBehavior<>), typeof(ValidationBehavior<>));
+
+        services.AddScoped<ICatalogIntegrationEventService, CatalogIntegrationEventService>();
 
         return services;
     }
