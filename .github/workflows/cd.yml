@@ -10,7 +10,7 @@ on:
 env:
   DOTNET_VERSION: '10.0.x'
   CONFIGURATION: Release
-  IMAGE_NAME: Catalog-api 
+  IMAGE_NAME: catalog-api 
 
 jobs:
   build-and-test:
